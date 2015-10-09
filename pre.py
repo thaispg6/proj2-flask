@@ -4,6 +4,7 @@ Test program for pre-processing schedule
 import arrow
 
 base = arrow.now()
+logger = None
 
 def process(raw):
     """
@@ -12,10 +13,15 @@ def process(raw):
     may be continued if they don't contain ':'.  
     """
     field = None
+    
+    sinal = 0
+
     entry = { }
-    cooked = [ ] 
+    cooked = [ ]
+
     for line in raw:
         line = line.rstrip()
+#        logger.debug("Looking at line: " + line)
         if len(line) == 0:
             continue
         parts = line.split(':')
@@ -31,18 +37,21 @@ def process(raw):
 
         if field == "begin":
             try:
-                base = arrow.get(content)
+                base = arrow.get(content, 'MM/DD/YYYY')
             except:
                 raise ValueError("Unable to parse date {}".format(content))
 
         elif field == "week":
             if entry:
                 cooked.append(entry)
-                entry = { }
+                entry = { }           
             entry['topic'] = ""
             entry['project'] = ""
-            entry['week'] = content
-
+            entry['week'] = content + '  - ' + str(base.replace(weeks = +int(content)-1).format('MM/DD/YYYY'))
+            if sinal == 0 and base.replace(weeks =+ int(content)) > arrow.get():
+                sinal = 1
+                entry['current_week'] = 1
+        
         elif field == 'topic' or field == 'project':
             entry[field] = content
 

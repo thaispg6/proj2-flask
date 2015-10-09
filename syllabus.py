@@ -20,7 +20,6 @@ from dateutil import tz  # For interpreting local times
 # Our own module
 import pre  # Preprocess schedule file
 
-
 ###
 # Globals
 ###
@@ -33,6 +32,7 @@ import uuid
 app.secret_key = str(uuid.uuid4())
 app.debug=CONFIG.DEBUG
 app.logger.setLevel(logging.DEBUG)
+#pre.logger = app.logger
 
 
 ###
